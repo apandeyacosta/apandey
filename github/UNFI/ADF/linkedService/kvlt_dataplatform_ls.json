@@ -1,0 +1,10 @@
+{
+	"name": "kvlt_dataplatform_ls",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://azueus2devkvltdatapltfm.vault.azure.net/"
+		}
+	}
+}

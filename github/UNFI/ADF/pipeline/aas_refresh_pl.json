@@ -1,0 +1,220 @@
+{
+	"name": "aas_refresh_pl",
+	"properties": {
+		"activities": [
+			{
+				"name": "refresh_aas_model",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "read_config_file",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[spRefresh_Control_Schedule]",
+					"storedProcedureParameters": {
+						"aasserver": {
+							"value": {
+								"value": "@activity('read_config_file').output.firstRow.aasserver",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"aasdbname": {
+							"value": {
+								"value": "@activity('read_config_file').output.firstRow.aasdbname",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"dev_aasrefreshnextrun": {
+							"value": {
+								"value": "@activity('read_config_file').output.firstRow.dev_aasrefreshnextrun",
+								"type": "Expression"
+							},
+							"type": "Int16"
+						},
+						"tst_aasrefreshnextrun": {
+							"value": {
+								"value": "@activity('read_config_file').output.firstRow.tst_aasrefreshnextrun",
+								"type": "Expression"
+							},
+							"type": "Int16"
+						},
+						"stg_aasrefreshnextrun": {
+							"value": {
+								"value": "@activity('read_config_file').output.firstRow.stg_aasrefreshnextrun",
+								"type": "Expression"
+							},
+							"type": "Int16"
+						},
+						"prd_aasrefreshnextrun": {
+							"value": {
+								"value": "@activity('read_config_file').output.firstRow.prd_aasrefreshnextrun",
+								"type": "Expression"
+							},
+							"type": "Int16"
+						},
+						"aasrefreshpriority": {
+							"value": {
+								"value": "@activity('read_config_file').output.firstRow.aasrefreshpriority",
+								"type": "Expression"
+							},
+							"type": "Int16"
+						},
+						"aasrefreshretries": {
+							"value": {
+								"value": "@activity('read_config_file').output.firstRow.aasrefreshretries",
+								"type": "Expression"
+							},
+							"type": "Int16"
+						},
+						"aasrefreshtype": {
+							"value": {
+								"value": "@activity('read_config_file').output.firstRow.aasrefreshtype",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"aasrefreshmodelobjectsjson": {
+							"value": null,
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "sqldb_aas_refresh_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "read_config_file",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "set_aas_refresh_objects",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BlobSource",
+						"recursive": true
+					},
+					"dataset": {
+						"referenceName": "wasb_config_src_ds",
+						"type": "DatasetReference",
+						"parameters": {
+							"fileName": "params_unfi.json"
+						}
+					}
+				}
+			},
+			{
+				"name": "set_aas_refresh_objects",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "aas_refresh_objects",
+					"value": {
+						"value": "''",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"aas_refresh_objects": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	},
+	"type": "SqlServerStoredProcedure",
+	"dependsOn": [],
+	"policy": {
+		"timeout": "7.00:00:00",
+		"retry": 0,
+		"retryIntervalInSeconds": 30,
+		"secureOutput": false,
+		"secureInput": false
+	},
+	"userProperties": [],
+	"typeProperties": {
+		"storedProcedureName": "[dbo].[spRefresh_Control_Schedule]",
+		"storedProcedureParameters": {
+			"aasserver": {
+				"value": "asazure://aspaaseastus2.asazure.windows.net/azueus2devaasretailbi",
+				"type": "String"
+			},
+			"aasdbname": {
+				"value": {
+					"value": "@variables('aas_model_name')",
+					"type": "Expression"
+				},
+				"type": "String"
+			},
+			"dev_aasrefreshnextrun": {
+				"value": "0",
+				"type": "Int16"
+			},
+			"tst_aasrefreshnextrun": {
+				"value": "0",
+				"type": "Int16"
+			},
+			"stg_aasrefreshnextrun": {
+				"value": "0",
+				"type": "Int16"
+			},
+			"prd_aasrefreshnextrun": {
+				"value": "1",
+				"type": "Int16"
+			},
+			"aasrefreshpriority": {
+				"value": "100",
+				"type": "Int16"
+			},
+			"aasrefreshretries": {
+				"value": "1",
+				"type": "Int16"
+			},
+			"aasrefreshtype": {
+				"value": "dynamicpartitioning",
+				"type": "String"
+			},
+			"aasrefreshmodelobjectsjson": {
+				"value": {
+					"value": "@variables('aas_autorefresh_json')",
+					"type": "Expression"
+				},
+				"type": "String"
+			}
+		}
+	},
+	"linkedServiceName": {
+		"referenceName": "sqldb_pbi_autodeployrefresh_ls",
+		"type": "LinkedServiceReference"
+	}
+}

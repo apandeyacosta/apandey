@@ -1,0 +1,28 @@
+{
+	"name": "wasb_config_src_ds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "wasb_adlsrccode_ls",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"fileName": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "AzureBlob",
+		"typeProperties": {
+			"format": {
+				"type": "JsonFormat",
+				"filePattern": "setOfObjects"
+			},
+			"fileName": {
+				"value": "@dataset().fileName",
+				"type": "Expression"
+			},
+			"folderPath": "dataplatform-wholesale-infomart/config"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

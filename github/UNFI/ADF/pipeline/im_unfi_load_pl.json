@@ -1,0 +1,21 @@
+{
+	"name": "im_unfi_load_pl",
+	"properties": {
+		"activities": [
+			{
+				"name": "aas_refresh_pl",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "aas_refresh_pl",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": []
+	}
+}
